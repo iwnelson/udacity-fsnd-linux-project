@@ -1,0 +1,45 @@
+{% extends 'base-template.html' %}
+
+{% block content %}
+
+{% autoescape false %}
+
+<div class="row">
+    <h2 class="col-sm-12">Edit {{oldWord.word}}</h2>
+    <hr class="col-sm-12">
+</div>
+
+<div class="row">
+    <form class="col-sm-12" method="post">
+        <div class="form-group">
+            <label for="word">Word</label>
+            <input type="text" class="form-control" value="{{oldWord.word}}" name="word">
+        </div>
+        <div class="form-group">
+            <label for="partOfSpeech">Part Of Speech</label>
+            <select class="form-control" name="partOfSpeech">
+                <option>Select part of speech</option>
+                <option>noun</option>
+                <option>adjective</option>
+                <option>verb</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="definition">Definition</label>
+            <input type="text" class="form-control" value="{{oldWord.definition}}" name="definition">
+        </div>
+        <div class="form-group">
+            <label for="inSentenceSpanish">Used in Spanish Sentence</label>
+            <input type="text" class="form-control" value="{{oldWord.inSentenceSpanish}}" name="inSentenceSpanish">
+        </div>
+        <div class="form-group">
+            <label for="inSentenceEnglish">Used in English Sentence</label>
+            <input type="text" class="form-control" value="{{oldWord.inSentenceEnglish}}" name="inSentenceEnglish">
+        </div>
+        <button type="submit" class="btn btn-primary">Edit word</button>
+    </form>
+</div>
+
+{% endautoescape %}
+
+{% endblock %}

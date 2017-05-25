@@ -1,0 +1,39 @@
+{% extends 'base-template.html' %}
+
+{% block content %}
+
+{% autoescape false %}
+
+<div class="row">
+    <h2 class="col-xs-12">{{title}}</h2>
+    <hr class="col-xs-12">
+</div>
+
+{% endautoescape %}
+
+{% for word in words %}
+
+<div class="row">
+    <h2 class="col-xs-12">{{word.word}}</h2>
+    <div class="col-xs-11 def pull-right"><em>({{word.partOfSpeech}})</em> | <b class="def">{{word.definition}}</b></div>
+    <div class="col-xs-11 pull-right"><em>{{word.inSentenceSpanish}}</em></div>
+    <div class="col-xs-11 pull-right"><em><u>{{word.inSentenceEnglish}}</u></em></div>
+    <div class="col-xs-11 muted pull-right"><img src="{{word.user.picture}}" alt="{{word.user.given_name}} {{word.user.family_name}}" height="42" width="42"> Contributed by {{word.user.given_name}} {{word.user.family_name}}</div>
+
+<!-- if authorized, allows editing, deleting words -->
+    {% if user %}
+        {% if word.user.key() == user.key() %}
+
+        <div class="col-xs-11 muted pull-right">
+            <a href="edit/{{word.key().id()}}" class="muted">Edit Word</a> &#127791;
+            <a href="delete/{{word.key().id()}}" class="muted">Delete Word</a>
+        </div>
+
+        {% endif %}
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

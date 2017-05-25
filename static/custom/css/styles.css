@@ -1,0 +1,66 @@
+* {
+    font-family: 'Indie Flower', cursive;
+    font-size: 16px;
+}
+
+body {
+    background-color: rgba(0, 188, 212, 0.2);
+}
+
+.container {
+    width: 90%;
+    max-width: 750px;
+}
+
+.warning {
+    color: red;
+    font-size: 1.5em;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+h1 {
+    font-family: 'Monofett', cursive;
+    font-size: 60px;
+}
+
+h2 {
+    font-family: 'Monofett', cursive;
+}
+
+h3 {
+    font-family: 'Monofett', cursive;
+}
+
+h4 {
+    font-family: 'Monofett', cursive;
+}
+
+
+h5 {
+    font-family: 'Monofett', cursive;
+}
+
+h6 {
+    font-family: 'Monofett', cursive;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.def {
+    font-size: 1.25em;
+}
+
+.muted {
+    color: #777;
+    font-size: 0.85em;
+}

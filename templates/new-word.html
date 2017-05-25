@@ -1,0 +1,45 @@
+{% extends 'base-template.html' %}
+
+{% block content %}
+
+{% autoescape false %}
+
+<div class="row">
+    <h2 class="col-sm-12">Add word</h2>
+    <hr class="col-sm-12">
+</div>
+
+<div class="row">
+    <form class="col-sm-12" method="post">
+        <div class="form-group">
+            <label for="word">Word</label>
+            <input type="text" class="form-control" name="word" placeholder="Word">
+        </div>
+        <div class="form-group">
+            <label for="partOfSpeech">Part Of Speech</label>
+            <select class="form-control" name="partOfSpeech" >
+                <option>Select part of speech</option>
+                <option>noun</option>
+                <option>adjective</option>
+                <option>verb</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="definition">Definition</label>
+            <input type="text" class="form-control" name="definition" placeholder="Definition">
+        </div>
+        <div class="form-group">
+            <label for="inSentenceSpanish">Used in Spanish Sentence</label>
+            <input type="text" class="form-control" name="inSentenceSpanish" placeholder="Used in Spanish Sentence" >
+        </div>
+        <div class="form-group">
+            <label for="inSentenceEnglish">Used in English Sentence</label>
+            <input type="text" class="form-control" name="inSentenceEnglish" placeholder="Used in English Sentence">
+        </div>
+        <button type="submit" class="btn btn-primary">Add word</button>
+    </form>
+</div>
+
+{% endautoescape %}
+
+{% endblock %}

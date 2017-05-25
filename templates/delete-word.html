@@ -1,0 +1,17 @@
+{% extends 'base-template.html' %}
+
+{% block content %}
+
+<div class="row">
+    <h2 class="col-sm-12">Delete {{word.word}}</h2>
+    <hr class="col-sm-12">
+</div>
+
+<div class="row">
+    <form class="col-sm-12" method="post">
+        <p class="warning"><em><b>Are you sure you want to delete {{word.word}}. <u>This cannot be undone.</u></b></em> <a href="/">Cancel</a></p>
+        <button type="submit" class="btn btn-primary">Delete {{word.word}}</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html
+    {% block html %}
+
+    {% endblock %}
+>
+<head>
+    <title>
+    {% block title %}
+
+    {% endblock %}
+
+    &#191;Como lo dice?
+    </title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='custom/css/styles.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower|Monofett" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="851809305104-c33qf0u529ddv1kjsad3ssqgflgg9928.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <h1 class="col-sm-12 header">&#191;Como lo dice?</h1>
+        <div class="col-sm-8">
+            <a href="/">Home</a> &#127791;
+            <a href="/nouns">Nouns</a> &#127791;
+            <a href="/adjectives">Adjectives</a> &#127791;
+            <a href="/verbs">Verbs</a> &#127791;
+            <a href="/new">Add a word</a> &#127791;
+
+            {% if user %}
+            </div>
+            <div class="col-sm-4 text-right">
+            <p>Hi {{user.given_name}}! &#127791; <a href="/signout">Sign out</a> <img src="{{user.picture}}" alt="{{user.given_name}} {{user.family_name}}" height="42" width="42"></p>
+
+            {% else %}
+
+            <a href="/login">Login</a>
+
+            {% endif %}
+
+        </div>
+        <div class="col-sm-12 warning">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li><strong>{{ message }}</strong></li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <hr class="col-sm-12">
+    </div>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <div class="row">
+        <hr class="col-sm-12">
+        <p class="col-sm-12 text-muted">&#191;Como lo dice? &#127791; Created by <a href="http://www.ianwnelson.com">Ian Nelson</a></p>
+    </div>
+</div>
+
+</body>
+</html>
