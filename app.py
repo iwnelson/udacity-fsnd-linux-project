@@ -331,5 +331,3 @@ def jsonDict():
 
 if __name__ == '__main__':
     app.secret_key = '0\x1ak\x02\x8a\xc2\xf3\x03\xd1\xf0H\xd0vpBb\xc4\xde\xf5~\xf9\xd3\x9c\xc9'
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
