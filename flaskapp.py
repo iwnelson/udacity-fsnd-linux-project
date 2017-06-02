@@ -1,40 +1,76 @@
 from flask import (Flask, render_template, request, redirect, jsonify, url_for,
                    flash)
 from flask import session as login_session
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
-from db_setup import Base, User, Word
 from oauth2client import client, crypt
 import json
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-
-# Connect to Database and create database session
-engine = create_engine('sqlite:///linuxapp1.db')
-Base.metadata.bind = engine
-
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
-
-app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/linuxapp5.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
 
 app.secret_key = '0\x1ak\x02\x8a\xc2\xf3\x03\xd1\xf0H\xd0vpBb\xc4\xde\xf5~\xf9\xd3\x9c\xc9'
 
-CLIENT_ID = json.loads(open('client_secrets.json', 'r').read()
+CLIENT_ID = json.loads(open('/var/www/html/flaskapp/client_secrets.json', 'r').read()
                        )['web']['client_id']
 APPLICATION_NAME = "&#191;Como lo dice?"
+
+# Create our database model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    g_id = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    given_name = db.Column(db.String(30), nullable=False)
+    family_name = db.Column(db.String(30), nullable=False)
+    picture = db.Column(db.String(500), nullable=False)
+
+    def __init__(self, g_id, email, given_name, family_name, picture):
+        self.g_id = g_id
+        self.email = email
+        self.given_name = given_name
+        self.family_name = family_name
+        self.picture = picture
+
+    def __repr__(self):
+        return '<User %r>' % self.given_name
+
+
+class Word(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('words', lazy='dynamic'))
+    word = db.Column(db.String(80), nullable=False)
+    partOfSpeech = db.Column(db.String(9), nullable=False)
+    definition = db.Column(db.String(300), nullable=False)
+    inSentenceSpanish = db.Column(db.String(300), nullable=False)
+    inSentenceEnglish = db.Column(db.String(300), nullable=False)
+
+    def __init__(self, user, word, partOfSpeech, definition, inSentenceSpanish,
+                 inSentenceEnglish):
+        self.user = user
+        self.word = word
+        self.partOfSpeech = partOfSpeech
+        self.definition = definition
+        self.inSentenceSpanish = inSentenceSpanish
+        self.inSentenceEnglish = inSentenceEnglish
+
+    def __repr__(self):
+        return '<Word %r>' % self.word
+
+db.create_all()
 
 
 # classmethod functions for User DB
 # looks up user entity by id number
 def by_user_id(u_id):
-    return session.query(User).filter_by(id=u_id)
+    return User.query.filter_by(id=u_id).first()
 
 
 # looks up user entity by g_id number
 def by_g_id(idinfo):
     g_id = idinfo['sub']
-    return session.query(User).filter_by(id=g_id)
+    return User.query.filter_by(g_id=g_id).first()
 
 
 # creates user entity but DOES NOT store
@@ -48,12 +84,12 @@ def register(idinfo):
 # Helper functions for Word DB
 # looks up word entity by id number
 def by_word_id(word_id):
-    return session.query(Word).filter_by(id=word_id)
+    return Word.query.filter_by(id=word_id).first()
 
 
 # returns word from database
 def by_word(word):
-    return session.query(Word).filter_by(word=word)
+    return Word.query.filter_by(word=word).first()
 
 
 # creates word entity but DOES NOT store
@@ -66,7 +102,7 @@ def createWord(form, user):
 
 
 # edits word entity but DOES NOT store
-def editWord(oldWord, form):
+def editWordFun(oldWord, form):
     oldWord.word = form['word']
     oldWord.partOfSpeech = form['partOfSpeech']
     oldWord.definition = form['definition']
@@ -132,8 +168,8 @@ def tokenAuth():
     # if new user, registers account
     if not by_g_id(idinfo):
         new_user = register(idinfo)
-        session.add(new_user)
-        session.commit()
+        db.session.add(new_user)
+        db.session.commit()
 
     # stores google data in login_session
     login_session['idinfo'] = idinfo
@@ -149,7 +185,7 @@ def clearSession():
 
 @app.route('/')
 def showMain():
-    words = session.query(Word).order_by(asc(Word.word))
+    words = Word.query.all()
     title = 'Palabras m&#225;s recientes &#127791; Most recent words'
     params = {'title': title}
     if 'idinfo' in login_session:
@@ -161,7 +197,7 @@ def showMain():
 
 @app.route('/nouns')
 def showNouns():
-    words = session.query(Word).filter_by(partOfSpeech='noun').order_by(asc(Word.word))
+    words = Word.query.filter_by(partOfSpeech='noun')
     title = 'Palabras m&#225;s recientes &#127791; Most recent words'
     params = {'title': title}
     if 'idinfo' in login_session:
@@ -173,7 +209,7 @@ def showNouns():
 
 @app.route('/adjectives')
 def showAdjectives():
-    words = session.query(Word).filter_by(partOfSpeech='adjective').order_by(asc(Word.word))
+    words = Word.query.filter_by(partOfSpeech='adjective')
     title = 'Adjetivos &#127791; Adjectives'
     params = {'title': title}
     if 'idinfo' in login_session:
@@ -185,7 +221,7 @@ def showAdjectives():
 
 @app.route('/verbs')
 def showVerbs():
-    words = session.query(Word).filter_by(partOfSpeech='verb').order_by(asc(Word.word))
+    words = Word.query.filter_by(partOfSpeech='verb')
     title = 'Verbos &#127791; Verbs'
     params = {'title': title}
     if 'idinfo' in login_session:
@@ -213,8 +249,8 @@ def newWord():
         else:
             user = by_g_id(login_session['idinfo'])
             word = createWord(form, user)
-            session.add(word)
-            session.commit()
+            db.session.add(word)
+            db.session.commit()
             flash('Thanks for adding %s, %s!' % (word.word, user.given_name))
             return redirect(url_for('showMain'))
     else:
@@ -256,9 +292,9 @@ def editWord(word_id):
                     flash(error)
                 return redirect(url_for('editWord', word_id=word_id))
             else:
-                editedWord = editWord(oldWord, form)
-                session.add(editedWord)
-                session.commit()
+                editedWord = editWordFun(oldWord, form)
+                db.session.add(editedWord)
+                db.session.commit()
                 flash('Thanks for updating %s, %s!' % (editedWord.word,
                                                        user.given_name))
                 return redirect(url_for('showMain'))
@@ -299,8 +335,8 @@ def deleteWord(word_id):
             return redirect(url_for('showMain'))
         else:
             word_text = word.word
-            session.delete(word)
-            session.commit()
+            db.session.delete(word)
+            db.session.commit()
             flash('You have successfully deleted %s, %s!' % (word_text,
                                                              user.given_name))
             return redirect(url_for('showMain'))
@@ -325,7 +361,7 @@ def deleteWord(word_id):
 
 @app.route('/jsondict')
 def jsonDict():
-    words = session.query(Word).all()
+    words = (Word).query.all()
     return jsonify(words=[w.serialize for w in words])
 
 

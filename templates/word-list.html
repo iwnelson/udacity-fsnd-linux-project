@@ -22,11 +22,11 @@
 
 <!-- if authorized, allows editing, deleting words -->
     {% if user %}
-        {% if word.user.key() == user.key() %}
+        {% if word.user.id == user.id %}
 
         <div class="col-xs-11 muted pull-right">
-            <a href="edit/{{word.key().id()}}" class="muted">Edit Word</a> &#127791;
-            <a href="delete/{{word.key().id()}}" class="muted">Delete Word</a>
+            <a href="edit/{{word.id}}" class="muted">Edit Word</a> &#127791;
+            <a href="delete/{{word.id}}" class="muted">Delete Word</a>
         </div>
 
         {% endif %}
